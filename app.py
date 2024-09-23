@@ -30,11 +30,6 @@ def fitbit():
 <html>
 <head>
     <title>Authorization Successful</title>
-    <script type="text/javascript">
-        setTimeout(function() {
-            window.close();
-        }, 5000);
-    </script>
 </head>
 <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif;">
     <div style="text-align: center;">
