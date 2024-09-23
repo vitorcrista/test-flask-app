@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitbit Authorization</title>
+</head>
+<body>
+    <button id="start-auth">Authorize Fitbit</button>
+    <script>
+        document.getElementById("start-auth").addEventListener("click", async () => {
+            const response = await fetch("http://localhost:5000/get-fb-auth-url", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    fitbit_client_id: "23RN66", 
+                    fitbit_client_secret: "b74d21fb3877efcb17c77e462677800b" 
+                })
+            });
+
+            const data = await response.json();
+            if (data.auth_url) {
+                window.open(data.auth_url, '_blank');  // Open the authorization URL in a new tab
+            } else {
+                alert(data.error || "Something went wrong.");
+            }
+        });
+    </script>
+</body>
+</html>
