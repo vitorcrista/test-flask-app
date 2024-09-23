@@ -29,7 +29,7 @@ def fitbit():
         """
 
     # Send the code back to the main server
-    main_server_url = "http://localhost:5000/receive_code"  # Change to your main server's URL
+    main_server_url = "http://34.175.7.148:5000/receive_code"  # Change to your main server's URL
     response = requests.post(main_server_url, json={"code": code, "state": state})
     
     return f"""
