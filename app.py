@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template
+import requests
 
 app = Flask(__name__)
 
@@ -8,6 +9,7 @@ def fitbit():
     code = request.args.get("code")
     state = request.args.get("state")
 
+    
     # sending the code back to the main server
 
     if not code or not state:
@@ -26,6 +28,10 @@ def fitbit():
         </html>
         """
 
+    # Send the code back to the main server
+    main_server_url = "http://localhost:5000/receive_code"  # Change to your main server's URL
+    response = requests.post(main_server_url, json={"code": code, "state": state})
+    
     return f"""
     <!DOCTYPE html>
     <html>
