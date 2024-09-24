@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 import requests
-import json
+    import json
 
 app = Flask(__name__)
 CORS(app)
@@ -62,6 +62,8 @@ def fitbit():
     # Read the user IDs from the JSON file
     user_ids = read_user_ids()
 
+    print(f"user_ids={user_ids}")
+
     if len(user_ids) == 0:
         print("No user ID was received and saved in the JSON file")
         return render_template("400.html")
@@ -70,12 +72,14 @@ def fitbit():
         "code": code,
         "user_id": user_ids[0],  # Use the first user ID (or modify as per your need)
     }
+    
+    print(f"payload ={payload}")
 
     try:
         # Call the Google web app's endpoint
         response = requests.post("http://34.175.7.148:5000/start-oauth", json=payload)
 
-        print(response.text)
+        print(f"response.text = {response.text}")
 
         # Check for success or handle failure
         if response.status_code == 200 or response.status_code == 201:
