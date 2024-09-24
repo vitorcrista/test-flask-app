@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 import requests
-    import json
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -72,7 +72,7 @@ def fitbit():
         "code": code,
         "user_id": user_ids[0],  # Use the first user ID (or modify as per your need)
     }
-    
+
     print(f"payload ={payload}")
 
     try:
