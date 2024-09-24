@@ -5,6 +5,16 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+ids = []
+
+@app.route("/save_user_id", methods=["POST"])
+def save_user_id():
+    global user_id
+    data = request.get_json()
+    uid = data.get("user_id")
+    ids.append(uid)
+    print("saving temporary user id locally.")
+
 @app.route("/fitbit/callback", methods=["GET"])
 def fitbit():
     code = request.args.get("code")
@@ -18,8 +28,14 @@ def fitbit():
         f"call endpoint on google web app to start the auth flow and send the code => {code} \
         and the state => {state} and the code_verifier => {code_verifier}"
     )
+    
+    if len(ids) == 0:
+        print("no user id was received and saved locally")
+        return render_template("400.html")
+    
     payload = {
         "code": code,
+        "user_id": ids[0]
     }
 
     try:
