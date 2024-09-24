@@ -5,13 +5,13 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-ids = []
+IDS = []
 
 @app.route("/save_user_id", methods=["POST"])
 def save_user_id():
     data = request.get_json()
     uid = data.get("user_id")
-    ids.append(uid)
+    IDS.append(uid)
     print("saving temporary user id locally.")
     return jsonify(message="Success!"), 200
 
@@ -29,13 +29,13 @@ def fitbit():
         and the state => {state} and the code_verifier => {code_verifier}"
     )
     
-    if len(ids) == 0:
+    if len(IDS) == 0:
         print("no user id was received and saved locally")
         return render_template("400.html")
     
     payload = {
         "code": code,
-        "user_id": ids[0]
+        "user_id": IDS[0]
     }
 
     try:
@@ -56,6 +56,7 @@ def fitbit():
         return render_template("500.html")
 
     # return html page
+    IDS=[]
     return render_template("200.html")
 
 
