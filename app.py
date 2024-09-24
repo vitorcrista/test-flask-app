@@ -14,6 +14,7 @@ def save_user_id():
     uid = data.get("user_id")
     ids.append(uid)
     print("saving temporary user id locally.")
+    return jsonify(message="Success!"), 200
 
 @app.route("/fitbit/callback", methods=["GET"])
 def fitbit():
