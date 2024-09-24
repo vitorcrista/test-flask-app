@@ -1,22 +1,49 @@
+import os
 from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 import requests
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-app.secret_key = "your_secret_key"  # Required for session to work
+# Path to the JSON file to store user IDs
+JSON_FILE_PATH = "user_ids.json"
 
 
-IDS = []
+# Helper function to read user IDs from JSON file
+def read_user_ids():
+    if not os.path.exists(JSON_FILE_PATH):
+        return []
+    with open(JSON_FILE_PATH, "r") as file:
+        try:
+            return json.load(file)
+        except json.JSONDecodeError:
+            return []
+
+
+def save_user_ids(user_ids):
+    with open(JSON_FILE_PATH, "w") as file:
+        json.dump(user_ids, file)
+
 
 @app.route("/save_user_id", methods=["POST"])
 def save_user_id():
     data = request.get_json()
     uid = data.get("user_id")
-    session['user_id'] = uid  # Save user_id to session
-    print("saving user id in session.")
+
+    # Read the existing user IDs
+    user_ids = read_user_ids()
+
+    # Append the new user ID to the list
+    user_ids.append(uid)
+
+    # Save the updated list back to the JSON file
+    save_user_ids(user_ids)
+
+    print("Saving user ID in JSON file.")
     return jsonify(message="Success!"), 200
+
 
 @app.route("/fitbit/callback", methods=["GET"])
 def fitbit():
@@ -31,21 +58,23 @@ def fitbit():
         f"call endpoint on google web app to start the auth flow and send the code => {code} \
         and the state => {state} and the code_verifier => {code_verifier}"
     )
-    
-    user_id = session.get("user_id")
-    if not user_id:
-        print("No user id was saved in session")
+
+    # Read the user IDs from the JSON file
+    user_ids = read_user_ids()
+
+    if len(user_ids) == 0:
+        print("No user ID was received and saved in the JSON file")
         return render_template("400.html")
-    
+
     payload = {
         "code": code,
-        "user_id": user_id
+        "user_id": user_ids[0],  # Use the first user ID (or modify as per your need)
     }
 
     try:
         # Call the Google web app's endpoint
         response = requests.post("http://34.175.7.148:5000/start-oauth", json=payload)
-        
+
         print(response.text)
 
         # Check for success or handle failure
@@ -60,7 +89,7 @@ def fitbit():
         return render_template("500.html")
 
     # return html page
-    session.pop('user_id', None)
+    save_user_ids([])
     return render_template("200.html")
 
 
