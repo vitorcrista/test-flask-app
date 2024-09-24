@@ -9,7 +9,6 @@ ids = []
 
 @app.route("/save_user_id", methods=["POST"])
 def save_user_id():
-    global user_id
     data = request.get_json()
     uid = data.get("user_id")
     ids.append(uid)
@@ -46,7 +45,7 @@ def fitbit():
         print(response.text)
 
         # Check for success or handle failure
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 201:
             print(f"Successfully sent the code and state. Response: {response.json()}")
         else:
             print(f"Failed to send data. Status code: {response.status_code}")
