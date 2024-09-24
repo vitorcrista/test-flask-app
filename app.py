@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
 CORS(app)
+
+app.secret_key = "your_secret_key"  # Required for session to work
+
 
 IDS = []
 
@@ -11,8 +14,8 @@ IDS = []
 def save_user_id():
     data = request.get_json()
     uid = data.get("user_id")
-    IDS.append(uid)
-    print("saving temporary user id locally.")
+    session['user_id'] = uid  # Save user_id to session
+    print("saving user id in session.")
     return jsonify(message="Success!"), 200
 
 @app.route("/fitbit/callback", methods=["GET"])
@@ -29,13 +32,14 @@ def fitbit():
         and the state => {state} and the code_verifier => {code_verifier}"
     )
     
-    if len(IDS) == 0:
-        print("no user id was received and saved locally")
+    user_id = session.get("user_id")
+    if not user_id:
+        print("No user id was saved in session")
         return render_template("400.html")
     
     payload = {
         "code": code,
-        "user_id": IDS[0]
+        "user_id": user_id
     }
 
     try:
@@ -56,7 +60,7 @@ def fitbit():
         return render_template("500.html")
 
     # return html page
-    IDS=[]
+    session.pop('user_id', None)
     return render_template("200.html")
 
 
