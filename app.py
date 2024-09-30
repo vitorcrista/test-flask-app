@@ -77,7 +77,7 @@ def fitbit():
 
     try:
         # Call the Google web app's endpoint
-        response = requests.post("https://test-fast-app-v50-69627867300.europe-southwest1.run.app/start-oauth", json=payload)
+        response = requests.post("https://chat4elderly-service-v0-69627867300.europe-southwest1.run.app/start-oauth", json=payload)
 
         print(f"response.text = {response.text}")
 
